@@ -6,10 +6,11 @@ import winsound
 import time
 import threading
 import sys
-from shutil import copyfile
-import os;
-import pathlib
+import os
+from datetime import datetime, timedelta
+import time
 
+intervalMinutes = 5
 
 keyboard = Controller()
 
@@ -36,20 +37,31 @@ def is_64bit_windows():
     return struct.calcsize('P') * 8 == 64
 
 
-if __name__ == "__main__":    
-	volumeThread = threading.Thread(target=increaseVolume)
-	audioThread = threading.Thread(target=playAudio, args=(audioPath,))
+if __name__ == "__main__":
 
-	if (is_64bit_windows()):
-	    ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, resource_path(imagePath), 3)
-	else:
-	    ctypes.windll.user32.SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, resource_path(imagePath), 3)
+	timeStamp = datetime.now() + timedelta(minutes=intervalMinutes)
 
-	volumeThread.start()
-	audioThread.start()
+	while True:
+		if (datetime.now() > timeStamp):
+			timeStamp = datetime.now() + timedelta(minutes=intervalMinutes)
 
-	volumeThread.join()
-	audioThread.join()
+			volumeThread = threading.Thread(target=increaseVolume)
+			audioThread = threading.Thread(target=playAudio, args=(audioPath,))
+
+			if (is_64bit_windows()):
+				ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, resource_path(imagePath), 3)
+			else:
+				ctypes.windll.user32.SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, resource_path(imagePath), 3)
+
+			volumeThread.start()
+			audioThread.start()
+
+			volumeThread.join()
+			audioThread.join()
+
+		time.sleep(5)
+		
+		
     
 
     
