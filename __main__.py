@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 import time
 
 intervalMinutes = 5
+playing = False
 
 keyboard = Controller()
 
@@ -19,12 +20,15 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 def playAudio(audioFile):
-	while True:
+	global playing
+	playing = True
+	for i in range(2):
 		time.sleep(0.05)
 		winsound.PlaySound(resource_path(audioFile), winsound.SND_FILENAME)
+	playing = False
 
 def increaseVolume():
-	while True:
+	while playing:
 		time.sleep(0.01)
 		keyboard.press(Key.media_volume_up)
 
